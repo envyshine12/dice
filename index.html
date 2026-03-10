@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Color Dice Roller</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#f2f2f2;
+    margin:0;
+    text-align:center;
+}
+
+.header{
+    background:#222;
+    color:white;
+    padding:16px;
+    font-size:24px;
+}
+
+.container{
+    max-width:900px;
+    margin:auto;
+    background:white;
+    padding:25px;
+    margin-top:30px;
+    border-radius:10px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.15);
+}
+
+.controls{
+    margin-bottom:20px;
+}
+
+select, button{
+    padding:10px 14px;
+    font-size:16px;
+    margin:5px;
+    border-radius:6px;
+    border:1px solid #ccc;
+}
+
+button{
+    background:#28a745;
+    color:white;
+    border:none;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#23923d;
+}
+
+.colorControls{
+    margin:20px 0;
+}
+
+.colorBox{
+    display:inline-flex;
+    align-items:center;
+    margin:6px;
+    padding:8px 12px;
+    border-radius:6px;
+    font-weight:bold;
+}
+
+.results{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin-top:20px;
+}
+
+.die{
+    width:70px;
+    height:70px;
+    margin:6px;
+    border-radius:12px;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 3px 6px rgba(0,0,0,0.25);
+    opacity:0;
+    transform: translateY(-20px);
+    animation: rollIn 0.5s forwards;
+}
+
+.dot{
+    width:16px;
+    height:16px;
+    background:white;
+    border-radius:50%;
+}
+
+@keyframes rollIn{
+    0% {opacity:0; transform: translateY(-20px);}
+    50% {opacity:1; transform: translateY(5px);}
+    100% {opacity:1; transform: translateY(0);}
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+🎲 Color Dice Roller
+</div>
+
+<div class="container">
+
+<div class="controls">
+<label>Number of Dice:</label>
+<select id="diceCount"></select>
+<button onclick="rollDice()">Roll Dice</button>
+</div>
+
+<h3>Select Allowed Colors</h3>
+<div class="colorControls">
+<div class="colorBox" style="background:#ff4d4d;color:white"><input type="checkbox" value="#ff4d4d" checked> Red</div>
+<div class="colorBox" style="background:#ff9f1c;color:white"><input type="checkbox" value="#ff9f1c" checked> Orange</div>
+<div class="colorBox" style="background:#ffd60a;color:black"><input type="checkbox" value="#ffd60a" checked> Yellow</div>
+<div class="colorBox" style="background:#2ec4b6;color:white"><input type="checkbox" value="#2ec4b6" checked> Green</div>
+<div class="colorBox" style="background:#3a86ff;color:white"><input type="checkbox" value="#3a86ff" checked> Blue</div>
+<div class="colorBox" style="background:#9b5de5;color:white"><input type="checkbox" value="#9b5de5" checked> Purple</div>
+</div>
+
+<div id="results" class="results"></div>
+</div>
+
+<!-- Dice roll sound -->
+<audio id="diceSound" src="https://actions.google.com/sounds/v1/dice/dice_roll.ogg"></audio>
+
+<script>
+const select = document.getElementById("diceCount");
+for(let i=1; i<=100; i++){
+    let option = document.createElement("option");
+    option.value = i;
+    option.text = i;
+    select.appendChild(option);
+}
+
+function getAllowedColors(){
+    const checkboxes = document.querySelectorAll(".colorControls input:checked");
+    let colors = [];
+    checkboxes.forEach(cb => colors.push(cb.value));
+    return colors;
+}
+
+function rollDice(){
+    const allowedColors = getAllowedColors();
+    if(allowedColors.length === 0){
+        alert("Select at least one color.");
+        return;
+    }
+
+    const count = select.value;
+    const results = document.getElementById("results");
+    results.innerHTML = "";
+
+    const diceSound = document.getElementById("diceSound");
+    diceSound.currentTime = 0;
+    diceSound.play();
+
+    for(let i=0;i<count;i++){
+        const color = allowedColors[Math.floor(Math.random()*allowedColors.length)];
+        const die = document.createElement("div");
+        die.className = "die";
+        die.style.background = color;
+
+        const dot = document.createElement("div");
+        dot.className = "dot";
+        die.appendChild(dot);
+
+        results.appendChild(die);
+        // trigger animation
+        die.style.animation = "rollIn 0.5s forwards";
+    }
+}
+
+rollDice();
+</script>
+
+</body>
+</html>
